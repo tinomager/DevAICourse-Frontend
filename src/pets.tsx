@@ -11,13 +11,18 @@ const PetList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<'all' | FindPetsByStatusStatusEnum>('available');
 
   useEffect(() => {
     const fetchPets = async () => {
       try {
         const config = new Configuration({ basePath: BASE_PATH });
         const api = new PetApi(config);
-        const response = await api.findPetsByStatus({ status: FindPetsByStatusStatusEnum.Available });
+        let statusParam: FindPetsByStatusStatusEnum | undefined;
+        if (selectedStatus !== 'all') {
+          statusParam = selectedStatus as FindPetsByStatusStatusEnum;
+        }
+        const response = await api.findPetsByStatus({ status: statusParam });
         setPets(response);
       } catch (err) {
         setError('Failed to fetch pets');
@@ -28,7 +33,7 @@ const PetList: React.FC = () => {
     };
 
     fetchPets();
-  }, []);
+  }, [selectedStatus]);
 
   if (loading) {
     return <div>Loading pets...</div>;
@@ -40,9 +45,26 @@ const PetList: React.FC = () => {
 
   return (
     <div>
-      <h2>Available Pets</h2>
+      <h2>Pets</h2>
+      <div className="status-filter">
+        <label htmlFor="status-select">Filter by status: </label>
+        <select
+          id="status-select"
+          value={selectedStatus}
+          onChange={(e) => {
+            const newStatus = e.target.value as 'all' | FindPetsByStatusStatusEnum;
+            setSelectedStatus(newStatus);
+            setLoading(true);
+          }}
+        >
+          <option value="all">All</option>
+          <option value="available">Available</option>
+          <option value="pending">Pending</option>
+          <option value="sold">Sold</option>
+        </select>
+      </div>
       {pets.length === 0 ? (
-        <p>No pets available</p>
+        <p>No pets {selectedStatus === 'all' ? 'found' : `with status ${selectedStatus}`}</p>
       ) : (
         <ul className="pet-list">
           {pets.map((pet) => (
