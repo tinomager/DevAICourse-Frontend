@@ -116,7 +116,7 @@ nav button:disabled {
 }
 
 .popup {
-  background: white;
+  background: rgb(22, 19, 19);
   padding: 2em;
   border-radius: 8px;
   max-width: 90%;

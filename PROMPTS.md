@@ -19,3 +19,9 @@ My Basepath is "http://127.0.0.1:8000"
 
 
 The next step is to refactor my pets.tsx. Please refactor the configuration to another file. I need it for using the CategoryApi too.
+
+Please use the CategoryApi to load the categories from my backend server instead of using dummy values.
+
+Now I want to add an edit button for every category listed in category.tsx. When the user clicks on the edit button, a form should open as pupop to edit the category name. After submitting the form, the name should be updated with the method CategoryApi.updateCategory
+
+Next step is to implement an "Add" Button to create new categories. After clicking the "Add" button, a popup should open where a new Category with Id and name can be entered. After submitting the form, the new category should be stored with the method CategoryApi.addCategory

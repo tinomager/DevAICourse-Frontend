@@ -19,8 +19,6 @@ const fetchCategories = async (): Promise<Category[]> => {
   }
 };
 
-// The updated CategoryList component is below, keeping the new functionality
-
 // Popup form component for editing category
 const EditCategoryForm: React.FC<{
   category: Category;
@@ -67,12 +65,59 @@ const EditCategoryForm: React.FC<{
   );
 };
 
+// Popup form component for adding a new category
+const AddCategoryForm: React.FC<{
+  onClose: () => void;
+  onAdd: (newCategory: Category) => void;
+}> = ({ onClose, onAdd }) => {
+  const [name, setName] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newCategory = { name };
+
+    try {
+      const config = new Configuration({ basePath: BASE_PATH });
+      const categoryApi = new CategoryApi(config);
+      const addedCategory = await categoryApi.addCategory({ category: newCategory });
+      onAdd(addedCategory);
+      onClose();
+    } catch (error) {
+      console.error('Failed to add category:', error);
+    }
+  };
+
+  return (
+    <div className="popup-overlay">
+      <div className="popup">
+        <h3>Add New Category</h3>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </label>
+          <div className="popup-buttons">
+            <button type="submit">Add</button>
+            <button type="button" onClick={onClose}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // Main CategoryList component
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -100,6 +145,10 @@ const CategoryList: React.FC = () => {
     ));
   };
 
+  const handleAdd = (newCategory: Category) => {
+    setCategories([...categories, newCategory]);
+  };
+
   if (loading) {
     return <div>Loading categories...</div>;
   }
@@ -111,6 +160,9 @@ const CategoryList: React.FC = () => {
   return (
     <div>
       <h2>Categories</h2>
+      <nav>
+        <button onClick={() => setShowAddForm(true)}>Add Category</button>
+      </nav>
       {categories.length === 0 ? (
         <p>No categories available</p>
       ) : (
@@ -128,6 +180,12 @@ const CategoryList: React.FC = () => {
           category={editingCategory}
           onClose={() => setEditingCategory(null)}
           onSave={handleSave}
+        />
+      )}
+      {showAddForm && (
+        <AddCategoryForm
+          onClose={() => setShowAddForm(false)}
+          onAdd={handleAdd}
         />
       )}
     </div>
