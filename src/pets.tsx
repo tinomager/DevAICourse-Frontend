@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import type { Pet } from './generated/models/Pet';
 import { PetApi, FindPetsByStatusStatusEnum } from './generated/apis/PetApi';
 import './App.css';
+import { Configuration } from './generated/runtime'; // Add this line
+import { BASE_PATH } from './apiConfig';
 
 const PetList: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -11,7 +13,8 @@ const PetList: React.FC = () => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const api = new PetApi();
+        const config = new Configuration({ basePath: BASE_PATH });
+        const api = new PetApi(config);
         const response = await api.findPetsByStatus({ status: FindPetsByStatusStatusEnum.Available });
         setPets(response);
       } catch (err) {
