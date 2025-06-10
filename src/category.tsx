@@ -2,19 +2,21 @@ import React, { useEffect, useState } from 'react';
 import type { Category } from './generated/models/Category';
 import './App.css';
 
-// Mock API function to simulate fetching categories
+import { CategoryApi } from './generated/apis/CategoryApi';
+import { Configuration } from './generated/runtime'; // Add this line
+import { BASE_PATH } from './apiConfig';
+
+// Function to fetch categories from the API
 const fetchCategories = async (): Promise<Category[]> => {
-  // Simulate a network request
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { id: 1, name: 'Dogs' },
-        { id: 2, name: 'Cats' },
-        { id: 3, name: 'Birds' },
-        { id: 4, name: 'Fish' },
-      ]);
-    }, 1000);
-  });
+  try {
+    const config = new Configuration({ basePath: BASE_PATH });
+    const categoryApi = new CategoryApi(config);
+    const categories = await categoryApi.getAllCategories();
+    return categories;
+  } catch (error) {
+    console.error('Failed to fetch categories:', error);
+    return [];
+  }
 };
 
 const CategoryList: React.FC = () => {
