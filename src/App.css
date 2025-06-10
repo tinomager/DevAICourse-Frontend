@@ -40,3 +40,55 @@
 .read-the-docs {
   color: #888;
 }
+
+.pet-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.pet-item {
+  border: 1px solid #33bb33;
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 4px;
+}
+
+.pet-item h3 {
+  margin-top: 0;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.category-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.category-item {
+  border: 1px solid #33bb33;
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 4px;
+}
+
+.category-item h3 {
+  margin-top: 0;
+}
+
+nav {
+  margin-bottom: 1em;
+}
+
+nav button {
+  margin: 0 0.5em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
