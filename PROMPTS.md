@@ -25,3 +25,7 @@ Please use the CategoryApi to load the categories from my backend server instead
 Now I want to add an edit button for every category listed in category.tsx. When the user clicks on the edit button, a form should open as pupop to edit the category name. After submitting the form, the name should be updated with the method CategoryApi.updateCategory
 
 Next step is to implement an "Add" Button to create new categories. After clicking the "Add" button, a popup should open where a new Category with Id and name can be entered. After submitting the form, the new category should be stored with the method CategoryApi.addCategory
+
+Now it is getting a bit more complicated. I now need funktionality to edit a pet. I want to have an edit button for every pet listed in pets.tsx. When the user is clicking on the edit button, a form should open as popup to the the pet. After submitting the form, the pet should be updated with the method PetApi.updatePet.
+
+-> Ok. The update form misses the photoUrls array and the category. Lets start with the photo urls. We want list all photourls a pet has. Allow to edit the text. Allow to remove an entry and allow to add new entries.

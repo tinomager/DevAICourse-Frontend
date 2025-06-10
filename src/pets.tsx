@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import type { Pet } from './generated/models/Pet';
 import { PetApi, FindPetsByStatusStatusEnum } from './generated/apis/PetApi';
 import './App.css';
-import { Configuration } from './generated/runtime'; // Add this line
+import { Configuration } from './generated/runtime';
 import { BASE_PATH } from './apiConfig';
+import PetEditForm from './PetEditForm';
 
 const PetList: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -63,9 +65,22 @@ const PetList: React.FC = () => {
                 </p>
               )}
               <p>Status: {pet.status}</p>
+              <button onClick={() => setEditingPet(pet)}>Edit</button>
             </li>
           ))}
         </ul>
+      )}
+      {editingPet && (
+        <PetEditForm
+          pet={editingPet}
+          onClose={() => setEditingPet(null)}
+          onUpdate={(updatedPet: Pet) => {
+            setPets(prevPets =>
+              prevPets.map(pet => (pet.id === updatedPet.id ? updatedPet : pet))
+            );
+            setEditingPet(null);
+          }}
+        />
       )}
     </div>
   );
