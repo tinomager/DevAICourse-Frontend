@@ -9,20 +9,45 @@ import { BASE_PATH } from './apiConfig';
 import './App.css';
 
 interface PetEditFormProps {
-  pet: Pet;
+  pet: Pet | null;
   onClose: () => void;
   onUpdate: (updatedPet: Pet) => void;
+  onCreate: (newPet: Pet) => void;
 }
 
-const PetEditForm: React.FC<PetEditFormProps> = ({ pet, onClose, onUpdate }) => {
-  const [formData, setFormData] = useState<Pet>({ ...pet });
+const PetEditForm: React.FC<PetEditFormProps> = ({ pet, onClose, onUpdate, onCreate }) => {
+  console.log("PetEditForm rendered with pet:", pet);
+
+  const [formData, setFormData] = useState<Pet>({
+    id: pet?.id || 0,
+    name: pet?.name || '',
+    category: pet?.category || undefined,
+    photoUrls: pet?.photoUrls || [],
+    tags: pet?.tags || [],
+    status: pet?.status || PetStatusEnum.Available
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [newPhotoUrl, setNewPhotoUrl] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    setFormData({ ...pet });
+    console.log("PetEditForm useEffect, setting formData:", {
+      id: pet?.id || 0,
+      name: pet?.name || '',
+      category: pet?.category || undefined,
+      photoUrls: pet?.photoUrls || [],
+      tags: pet?.tags || [],
+      status: pet?.status || PetStatusEnum.Available
+    });
+    setFormData({
+      id: pet?.id || 0,
+      name: pet?.name || '',
+      category: pet?.category || undefined,
+      photoUrls: pet?.photoUrls || [],
+      tags: pet?.tags || [],
+      status: pet?.status || PetStatusEnum.Available
+    });
   }, [pet]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -92,25 +117,30 @@ const PetEditForm: React.FC<PetEditFormProps> = ({ pet, onClose, onUpdate }) => 
     try {
       const config = new Configuration({ basePath: BASE_PATH });
       const api = new PetApi(config);
-      const response = await api.updatePet({ pet: formData });
-      onUpdate(response);
+
+      if (pet && pet.id) {
+        // Update existing pet
+        const response = await api.updatePet({ pet: formData });
+        onUpdate(response);
+      } else {
+        // Create new pet
+        const response = await api.addPet({ pet: formData });
+        onCreate(response);
+      }
+
       onClose();
     } catch (err) {
-      setError('Failed to update pet');
+      setError(pet && pet.id ? 'Failed to update pet' : 'Failed to create pet');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!pet) {
-    return null;
-  }
-
   return (
     <div className="popup-overlay">
       <div className="popup">
-        <h3>Edit Pet</h3>
+        <h3>{pet && pet.id ? 'Edit Pet' : 'Add New Pet'}</h3>
         <form onSubmit={handleSubmit}>
           <label>
             Name:
@@ -185,7 +215,7 @@ const PetEditForm: React.FC<PetEditFormProps> = ({ pet, onClose, onUpdate }) => 
               Cancel
             </button>
             <button type="submit" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Pet'}
+              {loading ? (pet && pet.id ? 'Updating...' : 'Creating...') : (pet && pet.id ? 'Update Pet' : 'Create Pet')}
             </button>
           </div>
         </form>

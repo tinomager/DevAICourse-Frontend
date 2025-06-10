@@ -11,6 +11,7 @@ const PetList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
+  const [addingPet, setAddingPet] = useState<boolean>(false);
   const [selectedStatus, setSelectedStatus] = useState<'all' | FindPetsByStatusStatusEnum>('available');
 
   useEffect(() => {
@@ -43,6 +44,15 @@ const PetList: React.FC = () => {
     return <div className="error">{error}</div>;
   }
 
+  const handleAddPet = (newPet: Pet) => {
+    setPets(prevPets => [newPet, ...prevPets]);
+  };
+
+  const handleAddButtonClick = () => {
+    console.log("Add Pet button clicked");
+    setAddingPet(true);
+  };
+
   return (
     <div>
       <h2>Pets</h2>
@@ -63,6 +73,9 @@ const PetList: React.FC = () => {
           <option value="sold">Sold</option>
         </select>
       </div>
+      <button onClick={handleAddButtonClick} className="add-pet-button">
+        Add Pet
+      </button>
       {pets.length === 0 ? (
         <p>No pets {selectedStatus === 'all' ? 'found' : `with status ${selectedStatus}`}</p>
       ) : (
@@ -102,6 +115,18 @@ const PetList: React.FC = () => {
             );
             setEditingPet(null);
           }}
+          onCreate={handleAddPet}
+        />
+      )}
+      {addingPet && (
+        <PetEditForm
+          pet={null}
+          onClose={() => {
+            console.log("Closing add pet form");
+            setAddingPet(false);
+          }}
+          onUpdate={handleAddPet}
+          onCreate={handleAddPet}
         />
       )}
     </div>

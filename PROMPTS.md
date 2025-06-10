@@ -31,3 +31,5 @@ Now it is getting a bit more complicated. I now need funktionality to edit a pet
 -> Ok. The update form misses the photoUrls array and the category. Lets start with the photo urls. We want list all photourls a pet has. Allow to edit the text. Allow to remove an entry and allow to add new entries.
 
 The list of pets does currently only list the pets in status available. I want to change the pet list to be able to choose the status to be filtered in the list.
+
+The last feature I need is to create a new Pet. Plesae add an "Add" Button to the list of pets to create a new pet. Plesae re-use the edit form to create a new pet. After submittng the form please use PetApi.addPet
