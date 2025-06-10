@@ -1,6 +1,6 @@
 import './App.css';
 import PetList from './pets';
-import CategoryList from './categoy';
+import CategoryList from './category';
 import { useState } from 'react';
 
 function App() {
